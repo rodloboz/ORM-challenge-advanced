@@ -1,5 +1,3 @@
-require 'byebug'
-
 class Record
   include Comparable
 
