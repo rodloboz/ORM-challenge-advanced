@@ -1,3 +1,11 @@
+# Adds shared behaviour to model classes
+#
+# == Creation
+#
+# Record accepts constructor parameters in a hash.
+#
+#   post = Post.new(title: "Article 1")
+#   post.title # => "Article 1"
 class Record
   include Comparable
 
@@ -6,63 +14,72 @@ class Record
     assign_attributes(attributes)
   end
 
-  def self.attr_accessor(*vars)
-    # @attribute_names ||= []
-    # @attribute_names.concat vars
-    super(*vars)
-  end
-
   # Class Methods:
   class << self
+    # Returns an array with the table column names
+    #
+    #   class Post < Record
+    #   end
+    #   Post.attribute_names # => ["id", "title", "url", "votes"]
     def attribute_names
       table_columns
     end
 
+    # Creates a record in the DB an returns an instance
     def create(attributes = {})
       new(attributes).save
     end
 
-    # Read
+    # Find a record in the DB by id
+    #
+    #   Post.find(3)
     def find(id)
       result = DB.execute("SELECT * FROM #{table_name} WHERE id = ?", id).first
       result.nil? ? nil : build_record(result)
     end
 
+    # Returns an array of instances for all records in the DB
     def all
-      rows = DB.execute("SELECT * FROM #{table_name}")
-
-      return [] if rows.empty?
-
-      rows.map { |row| build_record(row) }
+      DB.execute("SELECT * FROM #{table_name}")
+        .map { |row| build_record(row) }
     end
 
+    # Returns the instance of the last record in the DB
     def last
       all.last
     end
 
+    # Returns the instance of the first record in the DB
     def first
       all.first
     end
 
+    # Returns the instance of the second record in the DB
     def second
       all[1]
     end
 
+    # Returns the instance of the third record in the DB
     def third
       all[2]
     end
 
+    # Counts the number of records in the DB
     def count
       DB.execute("SELECT COUNT(id) FROM #{table_name}")
         .first["COUNT(id)"]
     end
 
-    # Destroy
+    # Destroys all the records for the model in the DB
     def destroy_all
       DB.execute("DELETE FROM #{table_name}")
       nil
     end
 
+    # Builds a simple where clause condition
+    # an returns an array of instances with matches
+    #
+    #   Post.where(title: "Amazing")
     def where(opts = {})
       key = opts.keys.first
       value = opts.values.first
