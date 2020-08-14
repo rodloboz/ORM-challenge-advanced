@@ -45,18 +45,19 @@ describe Post do
   end
 
   describe "self.all (class method)" do
-    before do
+    it "should load all posts from the database" do
       DB.execute("INSERT INTO `posts` (title) VALUES ('Article 1')")
       DB.execute("INSERT INTO `posts` (title) VALUES ('Article 2')")
-    end
-
-    it "should load all posts from the database" do
       posts = Post.all
       expect(posts.length).to eq 2
       expect(posts).to be_a Array
       expect(posts.first).to be_a Post
       expect(posts.first.title).to eq 'Article 1'
       expect(posts.last.title).to eq 'Article 2'
+    end
+
+    it "should return [] when there are no pots in the database" do
+      expect(Post.all).to eq([])
     end
   end
 

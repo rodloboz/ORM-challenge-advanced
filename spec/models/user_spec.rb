@@ -45,18 +45,19 @@ describe User do
   end
 
   describe "self.all (class method)" do
-    before do
+    it "should load all users from the database" do
       DB.execute("INSERT INTO `users` (first_name, last_name) VALUES ('George', 'Abitbol')")
       DB.execute("INSERT INTO `users` (first_name, last_name) VALUES ('Peter', 'Steven')")
-    end
-
-    it "should load all users from the database" do
       users = User.all
       expect(users.length).to eq 2
       expect(users).to be_a Array
       expect(users.first).to be_a User
       expect(users.first.first_name).to eq 'George'
       expect(users.last.first_name).to eq 'Peter'
+    end
+
+    it "should return [] when there are no pots in the database" do
+      expect(User.all).to eq([])
     end
   end
 
