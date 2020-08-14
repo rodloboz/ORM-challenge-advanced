@@ -166,7 +166,7 @@ class Record
   # Given a Posts table with :id, :title and :content,
   # it creates attr_accessor :id, :title, :content
   def initialize_accessors
-    self.class.__send__(:attr_accessor, *self.class.__send__(:table_columns))
+    self.class.send(:attr_accessor, *self.class.send(:table_columns))
     # self.class.table_columns.each { |c| self.class.__send__(:attr_accessor, c) }
   end
 
@@ -183,7 +183,7 @@ class Record
   end
 
   def table_name
-    self.class.__send__(:table_name)
+    self.class.send(:table_name)
   end
 
   def cast(value)
