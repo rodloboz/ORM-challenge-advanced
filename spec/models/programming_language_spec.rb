@@ -43,18 +43,19 @@ describe ProgrammingLanguage do
   end
 
   describe "self.all (class method)" do
-    before do
+    it "should load all programming_languages from the database" do
       DB.execute("INSERT INTO `programming_languages` (name) VALUES ('Ruby')")
       DB.execute("INSERT INTO `programming_languages` (name) VALUES ('Python')")
-    end
-
-    it "should load all programming_languages from the database" do
       programming_languages = ProgrammingLanguage.all
       expect(programming_languages.length).to eq 2
       expect(programming_languages).to be_a Array
       expect(programming_languages.first).to be_a ProgrammingLanguage
       expect(programming_languages.first.name).to eq 'Ruby'
       expect(programming_languages.last.name).to eq 'Python'
+    end
+
+    it "should return [] when there are no pots in the database" do
+      expect(ProgrammingLanguage.all).to eq([])
     end
   end
 
